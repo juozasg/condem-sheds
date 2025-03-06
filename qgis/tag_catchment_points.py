@@ -1,35 +1,15 @@
-rivers_layer = None
-layers = QgsProject.instance().mapLayersByName('rivers')
-river_source = layers[0]
-
-if not river_source:
-    print("Rivers layer not found")
-    exit()
-
-dest_crs = QgsProject.instance().crs()
-xform = QgsCoordinateTransform(river_source.crs(),
-                               dest_crs, 
-                               QgsProject.instance().transformContext())
-canvas.setExtent(xform.transform(river_source.extent()))
-canvas.refresh()
-
-rivers = river_source.clone()
-rivers.setName('rivers with cpoints')
-# Add the copy to the project
-QgsProject.instance().addMapLayer(rivers)
+import os
 
 
+exec(open(os.path.dirname(os.path.abspath(__file__)) + '/river_utils.py').read())
 
-fields = rivers.fields()
-provider = rivers.dataProvider()
+river = setup_taggable_rivers_layer() # this is loaded from the river_utils.py file
 
-new_fields = []
-if 'catchment_lat' not in fields.names():
-    new_fields.append(QgsField('catchment_lat', QVariant.Double, 'double', 10, 6))
-if 'catchment_lon' not in fields.names():
-    new_fields.append(QgsField('catchment_lon', QVariant.Double, 'double', 10, 6))
+# Get features with NULL catchment_lat values
+untagged_features = []
+for feature in river.getFeatures():
+    if feature['catchment_lat'] is NULL:  # NULL is a special QGIS constant
+        untagged_features.append(feature)
 
+print(f"Found {len(null_features)} features with NULL catchment_lat values")
 
-if new_fields:
-    provider.addAttributes(new_fields)
-    rivers.updateFields()
