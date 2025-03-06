@@ -1,6 +1,9 @@
-
+import os
 print('')
 print('click point to get catchment')
+
+exec(open(os.path.dirname(os.path.abspath(__file__)) + '/river_utils.py').read())
+
 
 # 
 PYSHEDS_DIR = '/mnt/data/gis/catchment/usgs-ui2/pysheds'
@@ -16,22 +19,18 @@ def calc_catchment_raster(col, row):
     l = iface.addRasterLayer(out_path, f"catchment-{col}-{row}")
     l.setOpacity(0.3)
 
+
+
+
 def canvasPressEvent(event):
     layer = iface.activeLayer()
     if layer.type() != QgsMapLayer.RasterLayer:
         print(layer.id(), "is not a raster layer")
         return
         
-    extent = layer.dataProvider().extent()
-    xres = extent.width() / layer.dataProvider().xSize()
-    yres = extent.height() / layer.dataProvider().ySize()
     pos = event.pos()
-    point = canvas.getCoordinateTransform().toMapCoordinates(pos.x(), pos.y())
-    x = point[0]
-    y = point[1]
-            
-    row = int(math.floor((extent.yMaximum() - y) / yres))
-    col = int(math.floor((x - extent.xMinimum()) / xres))
+    col, row = pos_to_col_row(layer, pos)
+
     calc_catchment_raster(col, row)
 
 
