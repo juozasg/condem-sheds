@@ -49,15 +49,24 @@ def calc_catchment(d8_path, x, y, output_path):
     print("catchment.py: Done!")
 
 
-# # ARGS
-# parser = argparse.ArgumentParser(description='Condition a DEM raster')
-# parser.add_argument('input_d8_path', type=str, help='Path to D8 flow direction raster file')
-# parser.add_argument('input_x', type=int, help='X pixel coordinate')
-# parser.add_argument('input_y', type=int, help='Y pixel coordinate')
-# parser.add_argument('output_catchment_path', type=str, help='Path for output catchment raster file')
-# args = parser.parse_args()
+# Extract river network
+# ---------------------
+# branches = grid.extract_river_network(fdir, acc > 50, dirmap=dirmap)
+
+print("YOLO")
+
+if __name__ == '__main__' and False:
+    # ARGS
+    parser = argparse.ArgumentParser(description='Condition a DEM raster')
+    parser.add_argument('input_d8_path', type=str, help='Path to D8 flow direction raster file')
+    parser.add_argument('input_x', type=int, help='X pixel coordinate')
+    parser.add_argument('input_y', type=int, help='Y pixel coordinate')
+    parser.add_argument('output_catchment_path', type=str, help='Path for output catchment raster file')
+    args = parser.parse_args()
+
+    # CALS
+    calc_catchment(args.input_d8_path, int(args.input_x), int(args.input_y), args.output_catchment_path)
 
 # # print(args)
 
-# calc_catchment(args.input_d8_path, int(args.input_x), int(args.input_y), args.output_catchment_path)
 
