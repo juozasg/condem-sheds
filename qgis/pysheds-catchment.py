@@ -2,17 +2,19 @@
 print('')
 print('click point to get catchment')
 
-# iface.addRasterLayer(path, f"catchment-{col}-{row}")
+# 
 PYSHEDS_DIR = '/mnt/data/gis/catchment/usgs-ui2/pysheds'
 
 def calc_catchment_raster(col, row):
     d8_path = PYSHEDS_DIR + '/data/d8-full.tif'
-    out_path = f'{PYSHEDS_DIR}/data/qgis-catchment-{col}-{row}'
+    out_path = f'{PYSHEDS_DIR}/data/qgis-catchment-{col}-{row}.tif'
     cmd = f'.venv/bin/python catchment.py {d8_path} {col} {row} {out_path}'
     print("--- Exec: ", cmd)
-    result = subprocess.check_output(cmd, shell=True, text=True, cwd=PYSHEDS_DIR))
-    print("--- Done")
+    result = subprocess.check_output(cmd, shell=True, text=True, cwd=PYSHEDS_DIR)
     print(result)
+    print("--- Done. Adding raster ", out_path)
+    l = iface.addRasterLayer(out_path, f"catchment-{col}-{row}")
+    l.setOpacity(0.3)
 
 def canvasPressEvent(event):
     layer = iface.activeLayer()
@@ -30,7 +32,7 @@ def canvasPressEvent(event):
             
     row = int(math.floor((extent.yMaximum() - y) / yres))
     col = int(math.floor((x - extent.xMinimum()) / xres))
-    calc_catchment_raster(row, col)
+    calc_catchment_raster(col, row)
 
 
 from qgis.gui import QgsMapToolEmitPoint

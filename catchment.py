@@ -53,9 +53,8 @@ def calc_catchment(d8_path, x, y, output_path):
 # ---------------------
 # branches = grid.extract_river_network(fdir, acc > 50, dirmap=dirmap)
 
-print("YOLO")
 
-if __name__ == '__main__' and False:
+if __name__ == '__main__':
     # ARGS
     parser = argparse.ArgumentParser(description='Condition a DEM raster')
     parser.add_argument('input_d8_path', type=str, help='Path to D8 flow direction raster file')
