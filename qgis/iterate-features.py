@@ -46,6 +46,26 @@ text_id = QLineEdit()
 text_id.setMaximumSize(QSize(40, 100))
 text_id.setText('0')
 
+def jump_to_id():
+    global ID
+    global layer
+    try:
+        new_id = int(text_id.text())
+        # Ensure ID is within valid range
+        feature_count = layer.featureCount()
+        if new_id >= feature_count:
+            new_id = feature_count - 1
+        elif new_id < 0:
+            new_id = 0
+        ID = new_id
+        zoom(ID)
+    except ValueError:
+        # If text is not a valid integer, reset to current ID
+        text_id.setText(str(ID))
+
+# Connect the editingFinished signal to jump_to_id function
+text_id.editingFinished.connect(jump_to_id)
+
 ## TOOLBAR
 zoom_toolbar = iface.addToolBar("Zoom Features")
 zoom_toolbar.addAction(zoom_prev_action)
