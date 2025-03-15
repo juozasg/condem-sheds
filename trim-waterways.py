@@ -53,24 +53,24 @@ def load_waterways():
 def find_isolated_endpoints(waterways):
     """
     Find endpoints of waterway lines that don't touch other lines.
-    
+
     Args:
         waterways: List of OGR feature objects representing waterway lines
-        
+
     Returns:
         list: List of (x, y) coordinates of isolated endpoints
     """
     # Extract all endpoints from all features
     all_endpoints = []
     endpoint_features = []  # Keep track of which feature each endpoint belongs to
-    
+
     for i, feature in enumerate(waterways):
         geom = feature.GetGeometryRef()
-        
+
         # Skip non-line geometries
         if geom.GetGeometryName() not in ['LINESTRING', 'MULTILINESTRING']:
             continue
-            
+
         # Handle both LINESTRING and MULTILINESTRING
         if geom.GetGeometryName() == 'MULTILINESTRING':
             # For multilinestring, get each component linestring
@@ -79,7 +79,7 @@ def find_isolated_endpoints(waterways):
                 # Get first and last points
                 start_point = (linestring.GetX(0), linestring.GetY(0))
                 end_point = (linestring.GetX(linestring.GetPointCount()-1), linestring.GetY(linestring.GetPointCount()-1))
-                
+
                 all_endpoints.append(start_point)
                 all_endpoints.append(end_point)
                 endpoint_features.extend([i, i])
@@ -87,49 +87,51 @@ def find_isolated_endpoints(waterways):
             # For simple linestring
             start_point = (geom.GetX(0), geom.GetY(0))
             end_point = (geom.GetX(geom.GetPointCount()-1), geom.GetY(geom.GetPointCount()-1))
-            
+
             all_endpoints.append(start_point)
             all_endpoints.append(end_point)
             endpoint_features.extend([i, i])
-    
+
     # Find isolated endpoints (those that appear only once in the list)
     isolated_endpoints = []
-    
+
     # Use a small tolerance for comparing coordinates
     tolerance = 1e-8
-    
+
     # For each endpoint, check if it's isolated
     for i, (x, y) in enumerate(all_endpoints):
         is_isolated = True
         feature_idx = endpoint_features[i]
-        
+
         # Compare with all other endpoints
         for j, (other_x, other_y) in enumerate(all_endpoints):
             if i == j:  # Skip comparing with itself
                 continue
-                
+
             # Check if this endpoint is close to another endpoint
             if (abs(x - other_x) < tolerance and abs(y - other_y) < tolerance):
                 is_isolated = False
                 break
-                
+
         if is_isolated:
             isolated_endpoints.append((x, y))
-    
+
     print(f"Found {len(isolated_endpoints)} isolated endpoints out of {len(all_endpoints)} total endpoints")
     return isolated_endpoints
 
 def main():
     # Load waterway features
     waterways = load_waterways()
-    
+
     # Find isolated endpoints
     isolated_endpoints = find_isolated_endpoints(waterways)
-    
-    # Print the first few isolated endpoints
-    print("\nSample of isolated endpoints (x, y):")
-    for i, (x, y) in enumerate(isolated_endpoints[:10]):
-        print(f"{i}: ({x:.6f}, {y:.6f})")
+
+    # save isolated endpoints to a geojson file AI!
+
+    # # Print the first few isolated endpoints
+    # print("\nSample of isolated endpoints (x, y):")
+    # for i, (x, y) in enumerate(isolated_endpoints[:10]):
+    #     print(f"{i}: ({x:.6f}, {y:.6f})")
 
 if __name__ == "__main__":
     main()
