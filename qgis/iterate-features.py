@@ -1,3 +1,6 @@
+from qgis.PyQt.QtWidgets import QAction, QLabel, QLineEdit
+from qgis.PyQt.QtCore import QSize
+
 layer = iface.activeLayer()
 canvas = iface.mapCanvas()
 ID = 0
