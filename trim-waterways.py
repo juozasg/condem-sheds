@@ -119,11 +119,11 @@ def find_isolated_endpoints(waterways):
     print(f"Found {len(isolated_endpoints)} isolated endpoints out of {len(all_endpoints)} total endpoints")
     return isolated_endpoints
 
-def save_endpoints_to_gpkg(endpoints, source_gpkg_path="data/waterways-dissolved-good.gpkg", 
+def save_endpoints_to_gpkg(endpoints, source_gpkg_path="data/waterways-dissolved-good.gpkg",
                           output_path="data/isolated_endpoints.gpkg"):
     """
     Save the isolated endpoints to a GeoPackage file with the same CRS as the source file.
-    
+
     Args:
         endpoints: List of (x, y) coordinates
         source_gpkg_path: Path to the source GeoPackage file to get CRS from
@@ -131,49 +131,49 @@ def save_endpoints_to_gpkg(endpoints, source_gpkg_path="data/waterways-dissolved
     """
     # Create the directory if it doesn't exist
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
+
     # Get the spatial reference from the source file
     source_driver = ogr.GetDriverByName("GPKG")
     source_ds = source_driver.Open(source_gpkg_path, 0)  # 0 means read-only
     source_layer = source_ds.GetLayerByName("waterways-dissolved-good")
     source_srs = source_layer.GetSpatialRef()
-    
+
     # Create the output GeoPackage
     driver = ogr.GetDriverByName("GPKG")
-    
+
     # Remove output file if it exists
     if os.path.exists(output_path):
         driver.DeleteDataSource(output_path)
-        
+
     # Create new data source and layer
     ds = driver.CreateDataSource(output_path)
     layer = ds.CreateLayer("isolated_endpoints", source_srs, ogr.wkbPoint)
-    
+
     # Add an ID field
     id_field = ogr.FieldDefn("id", ogr.OFTInteger)
     layer.CreateField(id_field)
-    
+
     # Create features for each endpoint
     for i, (x, y) in enumerate(endpoints):
         # Create a point geometry
         point = ogr.Geometry(ogr.wkbPoint)
         point.AddPoint(x, y)
-        
+
         # Create a feature
         feature = ogr.Feature(layer.GetLayerDefn())
         feature.SetGeometry(point)
         feature.SetField("id", i)
-        
+
         # Add the feature to the layer
         layer.CreateFeature(feature)
-        
+
         # Clean up
         feature = None
-    
+
     # Clean up
     ds = None
     source_ds = None
-    
+
     print(f"Saved {len(endpoints)} isolated endpoints to {output_path}")
 
 def main():
@@ -184,7 +184,7 @@ def main():
     isolated_endpoints = find_isolated_endpoints(waterways)
 
     # Save isolated endpoints to a GeoPackage file
-    save_endpoints_to_gpkg(isolated_endpoints)
+    # save_endpoints_to_gpkg(isolated_endpoints)
 
     # Print the first few isolated endpoints
     print("\nSample of isolated endpoints (x, y):")
