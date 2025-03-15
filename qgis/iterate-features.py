@@ -8,9 +8,9 @@ def zoom_next():
     ID += 1
     # Wrap around to the first feature if we've gone past the last one
     if ID >= layer.featureCount():
-        ID = 0
+        ID = 1
     zoom(ID)
-    
+
 def zoom_prev():
     global ID
     global layer
@@ -21,11 +21,11 @@ def zoom_prev():
     else:
         ID -= 1
     zoom(ID)
-    
+
 def zoom(ID):
     canvas.zoomToFeatureIds(layer, [ID])
     text_id.setText(str(ID))
-    
+
 def reset_id():
     global ID
     global layer
