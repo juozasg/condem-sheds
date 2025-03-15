@@ -213,6 +213,7 @@ def trim_waterway_lines(waterways, isolated_endpoints, trim_distance=30.0,
                         new_geom.AddGeometry(trimmed_linestring)
                         new_feature.SetField("trimmed", 1)
                         trimmed_count += 1
+                    # If line is too short to trim, don't add it to the output
                 else:
                     # Keep the original linestring
                     new_geom.AddGeometry(linestring.Clone())
@@ -244,6 +245,9 @@ def trim_waterway_lines(waterways, isolated_endpoints, trim_distance=30.0,
                     new_feature.SetGeometry(trimmed_linestring)
                     new_feature.SetField("trimmed", 1)
                     trimmed_count += 1
+                else:
+                    # Skip this feature if it's too short to trim
+                    continue
             else:
                 # Keep the original geometry
                 new_feature.SetGeometry(geom.Clone())
@@ -257,7 +261,10 @@ def trim_waterway_lines(waterways, isolated_endpoints, trim_distance=30.0,
     # Clean up
     ds = None
     
-    print(f"Saved {len(waterways)} waterway features to {output_path}, {trimmed_count} were trimmed")
+    # Count how many features were actually saved
+    feature_count = layer.GetFeatureCount()
+    print(f"Saved {feature_count} waterway features to {output_path}, {trimmed_count} were trimmed")
+    print(f"Skipped {len(waterways) - feature_count} features that were too short to trim")
 
 def trim_linestring(linestring, trim_start, trim_end, trim_distance):
     """
