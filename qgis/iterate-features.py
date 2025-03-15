@@ -24,6 +24,8 @@ def zoom_prev():
 
 def zoom(ID):
     canvas.zoomToFeatureIds(layer, [ID])
+    # Select the feature
+    layer.selectByIds([ID])
     text_id.setText(str(ID))
 
 def reset_id():
