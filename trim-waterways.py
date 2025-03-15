@@ -148,13 +148,7 @@ def trim_waterway_lines(waterways, isolated_endpoints, trim_distance=30.0,
     ds = driver.CreateDataSource(output_path)
     layer = ds.CreateLayer("trimmed_waterways", source_srs, ogr.wkbLineString)
 
-    # Copy field definitions from the first feature
-    feature_defn = waterways[0].GetDefnRef()
-    for i in range(feature_defn.GetFieldCount()):
-        field_defn = feature_defn.GetFieldDefnRef(i)
-        layer.CreateField(field_defn)
-
-    # Add a new field to indicate if the line was trimmed
+    # Add a field to indicate if the line was trimmed
     trimmed_field = ogr.FieldDefn("trimmed", ogr.OFTInteger)
     layer.CreateField(trimmed_field)
 
@@ -172,11 +166,6 @@ def trim_waterway_lines(waterways, isolated_endpoints, trim_distance=30.0,
 
         # Create a new feature for the output
         new_feature = ogr.Feature(layer.GetLayerDefn())
-
-        # Copy all field values from the original feature
-        for i in range(feature_defn.GetFieldCount()):
-            field_name = feature_defn.GetFieldDefnRef(i).GetName()
-            new_feature.SetField(field_name, feature.GetField(i))
 
         # Default to not trimmed
         new_feature.SetField("trimmed", 0)
