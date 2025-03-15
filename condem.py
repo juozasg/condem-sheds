@@ -62,13 +62,3 @@ calc_accumulation('data/d8-full.tif', f'data/accum-full.tif')
 # yi = 3489
 # calc_catchment('data/d8-full.tif', xi, yi, f'data/catchment-full-{xi}-{yi}.tif')
 
-
-# # ARGS
-# parser = argparse.ArgumentParser(description='Condition a DEM raster')
-# parser.add_argument('input_dem_path', type=str, help='Path to input DEM raster file')
-# parser.add_argument('output_dem_path', type=str, help='Path for output hydrologically-conditioned raster file')
-# args = parser.parse_args()
-
-# print(args)
-# condition_dem(args.input_dem_path, args.output_dem_path)
-
