@@ -9,7 +9,13 @@ def zoom_next():
     
 def zoom_prev():
     global ID
-    ID -= 1
+    global layer
+    if ID <= 0:
+        # Wrap around to the last feature
+        feature_count = layer.featureCount()
+        ID = feature_count - 1
+    else:
+        ID -= 1
     zoom(ID)
     
 def zoom(ID):
