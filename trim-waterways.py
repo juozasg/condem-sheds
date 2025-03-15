@@ -2,8 +2,9 @@
 
 import os
 import sys
+import json
 import numpy as np
-from osgeo import ogr
+from osgeo import ogr, osr
 
 def load_waterways():
     """
@@ -119,6 +120,43 @@ def find_isolated_endpoints(waterways):
     print(f"Found {len(isolated_endpoints)} isolated endpoints out of {len(all_endpoints)} total endpoints")
     return isolated_endpoints
 
+def save_endpoints_to_geojson(endpoints, output_path="data/isolated_endpoints.geojson"):
+    """
+    Save the isolated endpoints to a GeoJSON file.
+    
+    Args:
+        endpoints: List of (x, y) coordinates
+        output_path: Path to save the GeoJSON file
+    """
+    # Create a GeoJSON structure
+    geojson = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    
+    # Add each endpoint as a point feature
+    for i, (x, y) in enumerate(endpoints):
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [x, y]  # GeoJSON uses [longitude, latitude] order
+            },
+            "properties": {
+                "id": i
+            }
+        }
+        geojson["features"].append(feature)
+    
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    
+    # Write to file
+    with open(output_path, 'w') as f:
+        json.dump(geojson, f, indent=2)
+    
+    print(f"Saved {len(endpoints)} isolated endpoints to {output_path}")
+
 def main():
     # Load waterway features
     waterways = load_waterways()
@@ -126,12 +164,13 @@ def main():
     # Find isolated endpoints
     isolated_endpoints = find_isolated_endpoints(waterways)
 
-    # save isolated endpoints to a geojson file AI!
+    # Save isolated endpoints to a GeoJSON file
+    save_endpoints_to_geojson(isolated_endpoints)
 
-    # # Print the first few isolated endpoints
-    # print("\nSample of isolated endpoints (x, y):")
-    # for i, (x, y) in enumerate(isolated_endpoints[:10]):
-    #     print(f"{i}: ({x:.6f}, {y:.6f})")
+    # Print the first few isolated endpoints
+    print("\nSample of isolated endpoints (x, y):")
+    for i, (x, y) in enumerate(isolated_endpoints[:10]):
+        print(f"{i}: ({x:.6f}, {y:.6f})")
 
 if __name__ == "__main__":
     main()
