@@ -1,8 +1,10 @@
+import time
 import mido
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtGui import QIcon
 from qgis.utils import iface
+from qgis.core import QgsTask, QgsApplication
 import os
 
 
@@ -16,44 +18,53 @@ def open_midi_input_port(port_name):
         return None
 
 
-# in_port_name =
-input_port = None
+running = False
 
-def input_loop():
-    global input_port
+def input_loop(task, wait_time):
+    # global input_port
+    # print("input loop")
+    QgsMessageLog.logMessage("input loop TASK")
+    # return {'note': 'fuuck'}
+    input_port = open_midi_input_port("KeyLab mkII 61:KeyLab mkII 61 MIDI 32:0")
+    QgsMessageLog.logMessage("opened input port")
     for message in input_port:
-        print(message)
-
-
-class MidiInputThread(QThread):
-    """Thread to handle MIDI input without blocking QGIS"""
-
-    def __init__(self, parent=None):
-        QThread.__init__(self, parent)
-        self.running = False
-
-    def run(self):
-        self.running = True
-        global input_port
-        input_port = open_midi_input_port("KeyLab mkII 61:KeyLab mkII 61 MIDI 32:0")
-
-        while self.running and input_port:
-            try:
-                for message in input_port:
-                    if not self.running:
-                        break
-                    if message.type == 'note_on':
-                        note_on(message.note)
-                        # print(f"Note {message.note} on")
-                    # Process MIDI message here
-            except Exception as e:
-                print(f"Error in MIDI thread: {e}")
-                break
-
-    def stop(self):
-        self.running = False
-        if input_port:
+        QgsMessageLog.logMessage("message")
+        if message.type == 'note_on':
+            QgsMessageLog.logMessage("note on")
+            QgsMessageLog.logMessage("closing input port")
             input_port.close()
+            return {'note': message.note, task: task}
+
+
+def note_received(exception, result):
+    print("note received", exception, result)
+    if not exception:
+        try:
+            note_on(result['note'])
+        finally:
+            start_task()
+
+
+def start_task():
+    global running
+    # print("running?", running)
+    if not running:
+        return
+
+    task = QgsTask.fromFunction("MIDI Input 1", input_loop, on_finished=note_received, wait_time=5)
+    QgsApplication.taskManager().addTask(task)
+    print("added task")
+
+
+def start():
+    global running
+    running = True
+    start_task()
+
+def stop():
+    global running
+    running = False
+
 
 def note_on(note):
     print(note)
@@ -82,22 +93,16 @@ def toggle_midi_input(checked):
 
     if checked:
         # Create and start thread
-        midi_thread = MidiInputThread()
-        midi_thread.start()
-        print("MIDI input activated")
+        start()
+        # print("MIDI input activated")
     else:
         # Button is unchecked, stop MIDI input
-        if midi_thread and midi_thread.isRunning():
-            midi_thread.stop()
-            midi_thread = None
-        print("MIDI input deactivated")
+        stop()
+        # print("MIDI input deactivated"
 
 
 
-
-
-
-def next_feature():
+def next_feature(previous=False):
     """
     Select the next feature in the currently selected layer.
     - If no features are selected, selects the first feature
@@ -116,30 +121,31 @@ def next_feature():
         return
 
     # Get the next feature ID
-    next_id = get_next_feature_id(layer)
-    if next_id is None:
+    select_id = get_next_feature_id(layer, previous=previous)
+    if select_id is None:
         print("No features available to select")
         return
 
     # Select the feature
-    select_feature_by_id(layer, next_id)
-    print(f"Selected next feature with ID: {next_id}")
+    select_feature_by_id(layer, select_id)
+    print(f"Selected next feature with ID: {select_id}")
 
 
 
 def previous_feature():
-    pass
+    next_feature(previous=True)
 
 
-def get_next_feature_id(layer):
+def get_next_feature_id(layer, previous=False):
     """
-    Find the ID of the next feature to select based on current selection.
+    Find the ID of the next/previous feature to select based on current selection.
 
     Args:
         layer: The QGIS vector layer to work with
+        previous: If True, select previous feature instead of next (default: False)
 
     Returns:
-        The feature ID of the next feature to select, or None if no suitable feature
+        The feature ID of the next/previous feature to select, or None if no suitable feature
     """
     # Check if layer is valid and is a vector layer
     if not layer or layer.type() != 0:  # 0 is QgsMapLayer.VectorLayer
@@ -150,40 +156,35 @@ def get_next_feature_id(layer):
     if feature_count == 0:
         return None
 
+    # Build a list of feature IDs
+    feature_ids = [f.id() for f in layer.getFeatures()]
+    if not feature_ids:
+        return None
+
     # Get currently selected features
     selected_features = layer.selectedFeatures()
 
     if not selected_features:
-        # No selection - return the first feature ID
-        for feature in layer.getFeatures():
-            return feature.id()  # Return the ID of the first feature
+        # No selection - return first or last ID depending on direction
+        return feature_ids[-1 if previous else 0]
     else:
         # Get the last selected feature
-        current_feature = selected_features[-1]
-        current_id = current_feature.id()
+        current_id = selected_features[-1].id()
 
-        # Find the next feature ID
-        found_current = False
-        first_id = None
+        # Find current feature's index in the list
+        try:
+            current_index = feature_ids.index(current_id)
+        except ValueError:
+            # If current ID isn't found, start from beginning/end
+            return feature_ids[-1 if previous else 0]
 
-        # Loop through all features to find the next one
-        for feature in layer.getFeatures():
-            feature_id = feature.id()
+        # Calculate next/previous index with wrapping
+        if previous:
+            next_index = (current_index - 1) % len(feature_ids)
+        else:
+            next_index = (current_index + 1) % len(feature_ids)
 
-            # Remember the first feature ID for wrapping around
-            if first_id is None:
-                first_id = feature_id
-
-            # If we found the current feature, the next one is what we want
-            if found_current:
-                return feature_id
-
-            # Mark when we find the current feature
-            if feature_id == current_id:
-                found_current = True
-
-        # If we've reached here, we need to wrap around to the first feature
-        return first_id
+        return feature_ids[next_index]
 
 
 def select_feature_by_id(layer, feature_id):
@@ -197,6 +198,8 @@ def select_feature_by_id(layer, feature_id):
     if not layer or layer.type() != 0 or feature_id is None:
         return
 
+    print("selecting feature", feature_id)
+    return
     # Clear current selection
     layer.removeSelection()
 
