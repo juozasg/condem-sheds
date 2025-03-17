@@ -42,7 +42,9 @@ class MidiInputThread(QThread):
                 for message in input_port:
                     if not self.running:
                         break
-                    print(message)
+                    if message.type == 'note_on':
+                        note_on(message.note)
+                        # print(f"Note {message.note} on")
                     # Process MIDI message here
             except Exception as e:
                 print(f"Error in MIDI thread: {e}")
@@ -53,13 +55,23 @@ class MidiInputThread(QThread):
         if input_port:
             input_port.close()
 
+def note_on(note):
+    print(note)
+    if note == 36:
+        previous_feature()
+    elif note == 37:
+        next_feature()
+    elif note == 38:
+        zoom_line_start()
+    elif note == 39:
+        zoom_line_end()
+    elif note == 40:
+        zoom_selected_feature()
+
 
 # Global reference to thread and action
 midi_thread = None
 midi_action = None
-
-
-
 
 
 
@@ -69,13 +81,6 @@ def toggle_midi_input(checked):
     print("toggle midi input", checked)
 
     if checked:
-        # Button is checked, start MIDI input
-        # if not input_port:
-        #     input_port = open_midi_input_port(in_port_name)
-        #     if not input_port:
-        #         midi_action.setChecked(False)
-        #         return
-
         # Create and start thread
         midi_thread = MidiInputThread()
         midi_thread.start()
@@ -84,10 +89,122 @@ def toggle_midi_input(checked):
         # Button is unchecked, stop MIDI input
         if midi_thread and midi_thread.isRunning():
             midi_thread.stop()
-            # midi_thread.wait()  # Wait for thread to finish
             midi_thread = None
         print("MIDI input deactivated")
 
+
+
+
+
+
+def next_feature():
+    """
+    Select the next feature in the currently selected layer.
+    - If no features are selected, selects the first feature
+    - If multiple features are selected, uses the last selected one
+    - If the layer is a raster layer or has no features, does nothing
+    """
+    # Get the current layer
+    layer = iface.activeLayer()
+    if not layer:
+        print("No active layer")
+        return
+
+    # Check if it's a vector layer
+    if layer.type() != 0:  # 0 is QgsMapLayer.VectorLayer
+        print("Active layer is not a vector layer")
+        return
+
+    # Get the next feature ID
+    next_id = get_next_feature_id(layer)
+    if next_id is None:
+        print("No features available to select")
+        return
+
+    # Select the feature
+    select_feature_by_id(layer, next_id)
+    print(f"Selected next feature with ID: {next_id}")
+
+
+
+def previous_feature():
+    pass
+
+
+def get_next_feature_id(layer):
+    """
+    Find the ID of the next feature to select based on current selection.
+
+    Args:
+        layer: The QGIS vector layer to work with
+
+    Returns:
+        The feature ID of the next feature to select, or None if no suitable feature
+    """
+    # Check if layer is valid and is a vector layer
+    if not layer or layer.type() != 0:  # 0 is QgsMapLayer.VectorLayer
+        return None
+
+    # Get total feature count
+    feature_count = layer.featureCount()
+    if feature_count == 0:
+        return None
+
+    # Get currently selected features
+    selected_features = layer.selectedFeatures()
+
+    if not selected_features:
+        # No selection - return the first feature ID
+        for feature in layer.getFeatures():
+            return feature.id()  # Return the ID of the first feature
+    else:
+        # Get the last selected feature
+        current_feature = selected_features[-1]
+        current_id = current_feature.id()
+
+        # Find the next feature ID
+        found_current = False
+        first_id = None
+
+        # Loop through all features to find the next one
+        for feature in layer.getFeatures():
+            feature_id = feature.id()
+
+            # Remember the first feature ID for wrapping around
+            if first_id is None:
+                first_id = feature_id
+
+            # If we found the current feature, the next one is what we want
+            if found_current:
+                return feature_id
+
+            # Mark when we find the current feature
+            if feature_id == current_id:
+                found_current = True
+
+        # If we've reached here, we need to wrap around to the first feature
+        return first_id
+
+
+def select_feature_by_id(layer, feature_id):
+    """
+    Select a feature in the given layer by its ID.
+
+    Args:
+        layer: The QGIS vector layer containing the feature
+        feature_id: The ID of the feature to select
+    """
+    if not layer or layer.type() != 0 or feature_id is None:
+        return
+
+    # Clear current selection
+    layer.removeSelection()
+
+    # Select the feature
+    layer.select(feature_id)
+
+    # Optionally zoom to the selected feature
+    iface.mapCanvas().zoomToSelected(layer)
 
 # Create action
 midi_action = QAction("MIDI", iface.mainWindow())
