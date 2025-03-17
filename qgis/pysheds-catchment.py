@@ -10,8 +10,8 @@ exec(open(os.path.dirname(os.path.abspath(__file__)) + '/river_utils.py').read()
 PYSHEDS_DIR = '/mnt/data/gis/catchment/usgs-ui2/pysheds'
 
 def calc_catchment_raster(col, row):
-    d8_path = PYSHEDS_DIR + '/data/d8-full.tif'
-    out_path = f'{PYSHEDS_DIR}/data/qgis-catchment-{col}-{row}.tif'
+    d8_path = PYSHEDS_DIR + '/data/products/d8.tif'
+    out_path = f'{PYSHEDS_DIR}/data/products/qgis-catchment-{col}-{row}.tif'
     cmd = f'.venv/bin/python catchment.py {d8_path} {col} {row} {out_path}'
     print("--- Exec: ", cmd)
     result = subprocess.check_output(cmd, shell=True, text=True, cwd=PYSHEDS_DIR)
