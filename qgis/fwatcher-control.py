@@ -42,6 +42,26 @@ def previous_feature():
     next_feature(previous=True)
 
 
+def zoom_selected_feature():
+    layer = iface.activeLayer()
+    if not layer:
+        return
+
+    # Check if it's a vector layer
+    if layer.type() != 0:  # 0 is QgsMapLayer.VectorLayer
+        return
+
+    # Get the selected features
+    selected_features = layer.selectedFeatures()
+    if not selected_features:
+        return
+
+    # Zoom to the selected features
+    iface.mapCanvas().zoomToSelected(layer)
+    # print("Zoomed to selected feature(s)")
+    iface.mapCanvas().zoomByFactor(1.5)
+
+
 def get_next_feature_id(layer, previous=False):
     """
     Find the ID of the next/previous feature to select based on current selection.
@@ -116,7 +136,7 @@ def select_feature_by_id(layer, feature_id):
     iface.mapCanvas().zoomToSelected(layer)
 
     # zoom out by 10%
-    iface.mapCanvas().zoomByFactor(0.9)
+    iface.mapCanvas().zoomByFactor(1.25)
 
 
     # show notification with feature id and name attribute
@@ -130,6 +150,50 @@ def select_feature_by_id(layer, feature_id):
             duration=5,
         )
 
+
+
+def zoom_line(start=True):
+    """
+    Zoom to the first or last vertex of the currently selected LineString feature.
+
+    Args:
+        start (bool): If True, zoom to the first vertex. If False, zoom to the last vertex.
+    """
+    layer = iface.activeLayer()
+    if not layer:
+        return
+
+    # Check if it's a vector layer
+    if layer.type() != 0:  # 0 is QgsMapLayer.VectorLayer
+        return
+
+    # Get the selected features
+    selected_features = layer.selectedFeatures()
+    if not selected_features:
+        return
+
+    # Process the first selected feature
+    feature = selected_features[0]
+    geometry = feature.geometry()
+
+    if not geometry or not geometry.isMultipart() and geometry.type() != 1:  # 1 is LineString
+        print("Selected feature is not a LineString")
+        return
+
+    # Get the vertices of the LineString
+    vertices = list(geometry.vertices())
+    if not vertices:
+        print("No vertices found in the LineString")
+        return
+
+    # Choose the vertex to zoom to
+    vertex = vertices[0] if start else vertices[-1]
+
+    # Zoom to the vertex
+    iface.mapCanvas().setCenter(vertex)
+    iface.mapCanvas().zoomScale(1200)  # Set fixed scale to 1:1500
+    print(f"Zoomed to {'start' if start else 'end'} vertex: {vertex}")
+
 def proccess(code):
     print("code = ", code)
     if code == 36:
@@ -137,9 +201,9 @@ def proccess(code):
     elif code == 37:
         next_feature()
     elif code == 38:
-        zoom_line_start()
+        zoom_line(True)
     elif code == 39:
-        zoom_line_end()
+        zoom_line_end(False)
     elif code == 40:
         zoom_selected_feature()
 
@@ -182,8 +246,6 @@ class MidiInputThread(QThread):
             self.input_port.close()
 
 midi_thread = None
-
-
 
 watcher = None  # Global variable to hold the QFileSystemWatcher instance
 
