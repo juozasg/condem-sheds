@@ -19,4 +19,4 @@ class QPySheds:
         del self.action
 
     def run(self):
-        QMessageBox.information(None, 'Minimal plugin - ' + random.random(), 'werk werk werk werk werk werk')
+        QMessageBox.information(None, 'Minimal plugin - ' + str(random.random()), 'werk werk werk werk werk werk')

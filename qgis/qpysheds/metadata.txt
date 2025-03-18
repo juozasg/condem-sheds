@@ -1,5 +1,5 @@
 [general]
-name=QPysheds
+name=QPySheds
 description=Pyscheds catchment modeling tools
 about=Review and tag features. Shortcuts with RU keyboard layout for UX
 version=1.0
