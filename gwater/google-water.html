@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+ @license
+ Copyright 2019 Google LLC. All Rights Reserved.
+ SPDX-License-Identifier: Apache-2.0
+-->
+<html>
+
+<head>
+	<title>Water Map</title>
+
+	<!-- add favicon -->
+	<link rel="icon" href="favicon.png" type="image/png" />
+
+	<!-- jsFiddle will insert css and js -->
+	<style>
+		#map {
+			height: 100%;
+		}
+
+		/*
+ * Optional: Makes the sample page fill the window.
+ */
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="map"></div>
+	<div id="coords"></div>
+
+	<!--
+      The `defer` attribute causes the script to execute after the full HTML
+      document has been parsed. For non-blocking uses, avoiding race conditions,
+      and consistent behavior across browsers, consider loading using Promises. See
+      https://developers.google.com/maps/documentation/javascript/load-maps-js-api
+      for more information.
+      -->
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=ANOPEIzaSyCXr-u-4STW60LOHM-54s6o4Pons27Ge-g&callback=initMap&v=weekly"
+		defer></script>
+
+	<script>
+		// zoom = 13.7;
+		zoom = 14;
+		// const lat = 42.04579332;
+		// const lng = -86.26880879;
+		// const lat = 42.40043061;
+		// const lng = -84.40284324;
+		const lng = -84.27369807;
+		const lat = 41.12858122;
+
+
+
+		// map.getBounds(); b.getCenter; getNorthEast; getSouthWest
+		// map.setCenter({lat:42, lng:-86})
+
+		const metersPerPx = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, zoom)
+		console.log("meters per px", metersPerPx);
+
+		function initMap() {
+			// Create a map. Use the Gall-Peters map type.
+			const map = new google.maps.Map(document.getElementById("map"), {
+				zoom: zoom,
+				center: { lat, lng },
+				mapTypeControl: false,
+				fullscreenControl: false,
+				streetViewControl: false,
+				cameraControl: false,
+				scaleControl: true,
+				disableDefaultUI: true,
+				mapId: "611c009377cf1375"
+
+			});
+			console.log(map);
+			window.map = map;
+		}
+
+	</script>
+</body>
+
+</html>
