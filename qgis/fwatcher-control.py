@@ -149,6 +149,9 @@ def select_feature_by_id(layer, feature_id):
             level=Qgis.Info,
             duration=5,
         )
+        # identify the feature with identify tool
+        iface.actionIdentify().trigger()
+
 
 
 
@@ -190,7 +193,7 @@ def zoom_line(start=True):
     vertex = vertices[0] if start else vertices[-1]
 
     # Zoom to the vertex
-    iface.mapCanvas().setCenter(vertex)
+    iface.mapCanvas().setCenter(QgsPointXY(vertex))
     iface.mapCanvas().zoomScale(1200)  # Set fixed scale to 1:1500
     print(f"Zoomed to {'start' if start else 'end'} vertex: {vertex}")
 
@@ -203,7 +206,7 @@ def proccess(code):
     elif code == 38:
         zoom_line(True)
     elif code == 39:
-        zoom_line_end(False)
+        zoom_line(False)
     elif code == 40:
         zoom_selected_feature()
 
@@ -224,7 +227,7 @@ class MidiInputThread(QThread):
 
     def run(self):
         self.running = True
-        self.input_port = mido.open_input("KeyLab mkII 61:KeyLab mkII 61 MIDI 32:0")
+        self.input_port = mido.open_input("KeyLab mkII 61:KeyLab mkII 61 MIDI 36:0")
 
         while self.running and self.input_port:
             try:

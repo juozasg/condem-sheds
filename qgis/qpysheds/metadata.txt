@@ -1,0 +1,9 @@
+[general]
+name=QPysheds
+description=Pyscheds catchment modeling tools
+about=Review and tag features. Shortcuts with RU keyboard layout for UX
+version=1.0
+qgisMinimumVersion=3.0
+author=Juozas
+email=juozasgaigalas@gmail.com
+repository=http://github.com/juozasg/condem-sheds
