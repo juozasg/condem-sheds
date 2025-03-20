@@ -1,4 +1,8 @@
 import qgis
+from qgis.core import Qgis
+
+from PyQt5.QtCore import Qt
+
 
 class Navigator:
     def __init__(self, iface):
@@ -132,10 +136,9 @@ class Navigator:
         if feature:
             name = feature.attribute("name")
             self.iface.messageBar().pushMessage(
-                "Feature Selected",
-                f"ID: {feature_id}, Name: {name}",
-                level=qgis.Info,
-                duration=5,
+                f"Selected: {feature_id} ({name})",
+                level=Qgis.Info,
+                duration=3,
             )
             # Trigger the identify tool
             self.iface.actionIdentify().trigger()
@@ -180,6 +183,6 @@ class Navigator:
         vertex = vertices[0] if start else vertices[-1]
 
         # Zoom to the vertex
-        self.iface.mapCanvas().setCenter(QgsPointXY(vertex))
+        self.iface.mapCanvas().setCenter(qgis.core.QgsPointXY(vertex))
         self.iface.mapCanvas().zoomScale(1200)  # Set fixed scale to 1:1500
         print(f"Zoomed to {'start' if start else 'end'} vertex: {vertex}")

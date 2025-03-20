@@ -1,6 +1,9 @@
 import random
 from PyQt5.QtWidgets import QAction, QMessageBox
 from qgis.gui import QgisInterface
+from qgis.core import *
+
+from qpysheds.tag_feature import tag_selected_feature
 
 from .navigator import Navigator
 
@@ -24,9 +27,47 @@ class QPySheds:
         self.toolbar = self.iface.addToolBar("QPySheds")
         self.actions = []
 
+        # PREV
         action = QAction("Prev", self.iface.mainWindow())
+        # action.setText("Select Previous Feature")
         action.triggered.connect(self.navigator.previous_feature)
-        self.iface.registerMainWindowAction(action, 'ф')
+        self.iface.registerMainWindowAction(action, 'Ф')
+        self.iface.addPluginToMenu("QPySheds", action)
+        self.toolbar.addAction(action)
+        self.actions.append(action)
+
+        # NEXT
+        action = QAction("Next", self.iface.mainWindow())
+        # action.setText("Select Next Feature")
+        action.triggered.connect(self.navigator.next_feature)
+        self.iface.registerMainWindowAction(action, 'В')
+        self.iface.addPluginToMenu("QPySheds", action)
+        self.toolbar.addAction(action)
+        self.actions.append(action)
+
+        # LINE START
+        action = QAction("L-start", self.iface.mainWindow())
+        # action.setText("Select Next Feature")
+        action.triggered.connect(lambda: self.navigator.zoom_line(True))
+        self.iface.registerMainWindowAction(action, 'Й')
+        self.iface.addPluginToMenu("QPySheds", action)
+        self.toolbar.addAction(action)
+        self.actions.append(action)
+
+        # LINE END
+        action = QAction("L-end", self.iface.mainWindow())
+        # action.setText("Select Next Feature")
+        action.triggered.connect(lambda: self.navigator.zoom_line(False))
+        self.iface.registerMainWindowAction(action, 'У')
+        self.iface.addPluginToMenu("QPySheds", action)
+        self.toolbar.addAction(action)
+        self.actions.append(action)
+
+        # TAG
+        action = QAction("Tag", self.iface.mainWindow())
+        # action.setText("Select Next Feature")
+        action.triggered.connect(lambda: tag_selected_feature(self.iface))
+        self.iface.registerMainWindowAction(action, 'Е')
         self.iface.addPluginToMenu("QPySheds", action)
         self.toolbar.addAction(action)
         self.actions.append(action)
