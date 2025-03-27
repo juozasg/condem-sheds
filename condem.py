@@ -52,9 +52,15 @@ def condition_dem(dem_path, condem_path, eps, max_iter):
 
 
 # LEZDOIT
-condition_dem('data/products/source.tif', 'data/products/condem.tif', eps=1e-11, max_iter=100000)
-calc_d8('data/products/condem.tif', 'data/products/d8.tif')
-calc_accumulation('data/products/d8.tif', f'data/products/accum.tif')
+# condition_dem('data/products/source.tif', 'data/products/condem.tif', eps=1e-11, max_iter=100000)
+# calc_d8('data/products/condem.tif', 'data/products/d8.tif')
+# calc_accumulation('data/products/d8.tif', f'data/products/accum.tif')
+
+
+# LEZDOIT
+condition_dem('data/condem-pass-2/source.tif', 'data/condem-pass-2/output/condem.tif', eps=1e-11, max_iter=100000)
+calc_d8('data/condem-pass-2/output/condem.tif', 'data/condem-pass-2/output/d8.tif')
+calc_accumulation('data/condem-pass-2/output/d8.tif', f'data/condem-pass-2/output/accum.tif')
 
 
 
