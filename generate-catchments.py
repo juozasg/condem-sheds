@@ -10,6 +10,7 @@ with open('monitoring-d8-col-row.csv', 'r') as f:
     reader = csv.reader(f)
     next(reader)  # Skip header row
     for row in reader:
+        print(row)
         site_id, col, row = row
         sites_with_raster_coords.append([site_id, int(col), int(row)])
 
