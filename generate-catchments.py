@@ -1,4 +1,5 @@
 import csv
+import os
 
 # read csv file monitoring-d8-col-row.csv with cols siteId, col, row
 # read csv file rivers-d8-col-row.csv with cols id, startCol, startRow, endCol, endRow
@@ -15,7 +16,7 @@ with open('monitoring-d8-col-row.csv', 'r') as f:
 
 # Read rivers-d8-col-row.csv
 rivers_with_raster_coords = []
-with open('monitoring-d8-col-row.csv', 'r') as f:
+with open('rivers-d8-col-row.csv', 'r') as f:
     reader = csv.reader(f)
     next(reader)  # Skip header row
     for row in reader:
@@ -29,13 +30,17 @@ for site in sites_with_raster_coords:
     site_id, col, row = site
     name = f'site-{site_id}'
     print(f"generate-catchments.py: Generating catchment for site {site_id}")
-    calc_catchment('data/condem-pass-2/output/d8.tif', col, row, f'generated-catchments/{name}.tif')
+    # if file doesnt exist
+    if not os.path.isfile(f'generated-catchments/{name}.tif'):
+        calc_catchment('data/condem-pass-2/output/d8.tif', col, row, f'generated-catchments/{name}.tif')
 
 for river in rivers_with_raster_coords:
     river_id, startCol, startRow, endCol, endRow = river
     print(f"generate-catchments.py: Generating catchment for river {river_id}")
     name = f'river-star-{river_id}'
-    calc_catchment('data/condem-pass-2/output/d8.tif', startCol, startRow, f'generated-catchments/{name}.tif')
+    if not os.path.isfile(f'generated-catchments/{name}.tif'):
+        calc_catchment('data/condem-pass-2/output/d8.tif', startCol, startRow, f'generated-catchments/{name}.tif')
 
     name = f'river-end-{river_id}'
-    calc_catchment('data/condem-pass-2/output/d8.tif', endCol, endRow, f'generated-catchments/{name}.tif')
+    if not os.path.isfile(f'generated-catchments/{name}.tif'):
+        calc_catchment('data/condem-pass-2/output/d8.tif', endCol, endRow, f'generated-catchments/{name}.tif')
