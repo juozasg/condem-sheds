@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QAction, QMessageBox
 from qgis.gui import QgisInterface
 from qgis.core import *
 
-from qpysheds.tag_feature import tag_selected_feature
+from qpysheds.tag_feature import tag_selected_feature, toggle_werk_layergroup
 
 from .navigator import Navigator
 
@@ -56,7 +56,6 @@ class QPySheds:
 
         # LINE END
         action = QAction("L-end", self.iface.mainWindow())
-        # action.setText("Select Next Feature")
         action.triggered.connect(lambda: self.navigator.zoom_line(False))
         self.iface.registerMainWindowAction(action, 'У')
         self.iface.addPluginToMenu("QPySheds", action)
@@ -65,13 +64,20 @@ class QPySheds:
 
         # TAG
         action = QAction("Tag", self.iface.mainWindow())
-        # action.setText("Select Next Feature")
         action.triggered.connect(lambda: tag_selected_feature(self.iface))
         self.iface.registerMainWindowAction(action, 'Е')
         self.iface.addPluginToMenu("QPySheds", action)
         self.toolbar.addAction(action)
         self.actions.append(action)
 
+
+        # Toggle
+        action = QAction("Togl", self.iface.mainWindow())
+        action.triggered.connect(lambda: toggle_werk_layergroup(self.iface))
+        self.iface.registerMainWindowAction(action, 'Ц')
+        self.iface.addPluginToMenu("QPySheds", action)
+        # self.toolbar.addAction(action)
+        self.actions.append(action)
 
         # action = QAction("Next", self.iface.mainWindow())
         # action.triggered.connect(self.navigator.next_feature)

@@ -141,7 +141,7 @@ class Navigator:
                 duration=3,
             )
             # Trigger the identify tool
-            self.iface.actionIdentify().trigger()
+            # self.iface.actionIdentify().trigger()
 
     def zoom_line(self, start=True):
         """

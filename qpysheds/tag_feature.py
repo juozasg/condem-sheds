@@ -48,3 +48,17 @@ def tag_selected_feature(iface):
 
 
         iface.messageBar().pushMessage("Success", "Feature copied to 'tagged' layer", level=3, duration=1)
+
+def toggle_werk_layergroup(iface):
+    # Check if the tagged layer exists
+    werk_layergroup = QgsProject.instance().layerTreeRoot().findGroup('werk')
+    if not werk_layergroup:
+        iface.messageBar().pushMessage("Error", "Layer group 'werk' not found", level=1)
+        return
+
+    werk_layergroup = werk_layergroup.layer()
+
+    if werk_layergroup.isVisible():
+        werk_layergroup.setVisible(False)
+    else:
+        werk_layergroup.setVisible(True)
