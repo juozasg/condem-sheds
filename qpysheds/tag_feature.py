@@ -56,9 +56,9 @@ def toggle_werk_layergroup(iface):
         iface.messageBar().pushMessage("Error", "Layer group 'werk' not found", level=1)
         return
 
-    werk_layergroup = werk_layergroup.layer()
+    # werk_layergroup = werk_layergroup.layer()
 
     if werk_layergroup.isVisible():
-        werk_layergroup.setVisible(False)
+        werk_layergroup.setItemVisibilityChecked(False)
     else:
-        werk_layergroup.setVisible(True)
+        werk_layergroup.setItemVisibilityChecked(True)
