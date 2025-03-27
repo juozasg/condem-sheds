@@ -59,11 +59,11 @@ for river in rivers:
 
 # write to csv
 import csv
-# with open('monitoring-d8-col-row.csv', 'w') as f:
-#     writer = csv.writer(f)
-#     writer.writerow(['siteId', 'col', 'row'])
-#     for site in sites_with_raster_coords:
-#         writer.writerow(site)
+with open('monitoring-d8-col-row.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(['siteId', 'col', 'row'])
+    for site in sites_with_raster_coords:
+        writer.writerow(site)
 
 with open('rivers-d8-col-row.csv', 'w') as f:
     writer = csv.writer(f)
