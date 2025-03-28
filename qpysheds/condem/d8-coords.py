@@ -42,7 +42,8 @@ for site in sites:
     col, row = pos_to_col_row(raster, point)
 
     siteId = site['siteId']
-    sites_with_raster_coords.append((siteId, col, row))
+    if col >= 0 and row >= 0:
+        sites_with_raster_coords.append((siteId, col, row))
 
 for river in rivers:
     # rivers are LineString features
