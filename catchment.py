@@ -42,7 +42,7 @@ def calc_catchment(d8_path, x, y, output_path):
     catch = grid.catchment(x=x, y=y, fdir=fdir, dirmap=dirmap,
                        xytype='index')
 
-    print(catch)
+    # print(catch)
     print(f"catchment.py: Saving catchment raster {output_path}")
     grid.to_raster(catch, output_path, dtype=np.uint8)
 
