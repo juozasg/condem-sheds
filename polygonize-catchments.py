@@ -7,8 +7,6 @@ def polygonize_simplify_reproject(name):
     polygon_path = f'generated-catchments/geojson/{name}.poly.geojson'
     simp_path = f'generated-catchments/geojson/{name}.simp.geojson'
     reproj_path = f'generated-catchments/geojson/output/{name}.geojson'
-    # if not os.path.isfile(polygon_path):
-        # print(f"generate-catchments.py: Polygonizing, simplifying and reprojecting {input_path}")
 
     if not os.path.isfile(reproj_path):
         print("---POLUGONIZE---")
