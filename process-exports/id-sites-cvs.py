@@ -31,7 +31,7 @@ def numeric_site_id(site_id):
     return 0
 
 # Load the GeoJSON file
-geojson_path = '/home/juozas/code/SJRBC-web-map-data/geojson/sites.geojson'
+geojson_path = '/home/juozas/code/SJRBC-web-map-data/geojson/site.geojson'
 with open(geojson_path, 'r') as f:
     data = json.load(f)
 
