@@ -16,9 +16,10 @@ with open(path, 'r') as csvfile:
             sites_datasets_id_dict[row['datasetId']] = row['id']
 
 
+
 # Find all geojson files matching the pattern
 # file_pattern = '/home/juozas/code/SJRBC-web-map-data/geojson/catchments/river-end-*.geojson'
-file_pattern = '/home/juozas/code/SJRBC-web-map-data/geojson/catchments/site-*.geojson'
+file_pattern = 'generated-catchments/geojson/output/shaved/site-*.geojson'
 catchment_files = glob.glob(file_pattern)
 
 # Extract ID from filenames and sort files numerically
@@ -31,7 +32,7 @@ def extract_id_simple(filename):
 
 def extract_numeric_id_site(filename):
     # Extract number from filename
-    # print(filename)
+    print(filename)
     match = re.search(r'site-(\w+)-(\d+)\.geojson', filename)
     if match:
         ds = match.group(1)
@@ -40,7 +41,7 @@ def extract_numeric_id_site(filename):
         dataset_id = int(sites_datasets_id_dict[ds])
 
         id = dataset_id + id
-        # print(f"ID: {id} for {filename}")
+        print(f"ID: {id} for {filename}")
         return id
     return 0
 

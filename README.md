@@ -14,7 +14,7 @@ To get site pixel index coordinates (col, row) or (x, y) for sites the QGIS scri
 
 `generate-catchments.py` will use the same `d8` raster and the generated `monitoring-d8-col-row.csv` to calculate catchment geotiffs for each site.
 
-`process-exports/polygonize-catchment.py` takes each catchment geotiff raster and will polygonize it, projected it to `EPSG:4326` (lat, lon), then  simplify the geometry and then save it as a geojson polygon. `monitoring-d8-col-row.csv` provides the list of sites (and rivers) to process. **native python must be used, not .venv python - for QGIS/GDAL**
+`process-exports/polygonize-catchment.py` takes each catchment geotiff raster and will polygonize it, projected it to `EPSG:4326` (lat, lon), then  simplify the geometry and then save it as a geojson polygon. `monitoring-d8-col-row.csv` provides the list of sites (and rivers) to process. **system or QGIS python must be used, not .venv python - for QGIS/GDAL**
 
 `shave-catchments.sh` will reduce the length of floating points ASCII in geojson files to reduce file size.
 
