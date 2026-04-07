@@ -1,10 +1,14 @@
 # this is a QGIS script
 # It is not a standalone script
+# copy and paste into QGIS python environment to run
+# TODO: make this run from command line and batch script for new stuff
+# NOTE: commented out rivers and everything else except new elkhart sites
 raster = QgsProject.instance().mapLayersByName('d8')[0]
 
 monitoring = QgsProject.instance().mapLayersByName('monitoring')[0]
 flow_usgs = QgsProject.instance().mapLayersByName('flow-usgs')[0]
 flow_tolthawk = QgsProject.instance().mapLayersByName('flow-tolthawk')[0]
+
 
 rivers = list(QgsProject.instance().mapLayersByName('rivers')[0].getFeatures())
 

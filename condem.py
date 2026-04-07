@@ -36,13 +36,13 @@ def condition_dem(dem_path, condem_path, eps, max_iter):
     # Resolve flats in DEM
     print("condem.py: Resolving flats...")
     inflated_dem = grid.resolve_flats(flooded_dem, eps=eps, max_iter=max_iter)
-    Grid.resolve_flats
+    # Grid.resolve_flats
 
     # Save the condition DEM
     print(f"condem.py: Saving conditioned DEM {condem_path}")
     grid.to_raster(inflated_dem, condem_path)
 
-    # Run gdalinfo -stats on the output DEM (last 10 lines)
+    # Run gdalinfo -stats on the output DEM (last 10 lines)=
     print("condem.py: gdalinfo -stats")
     print("--------------------------------")
     print(subprocess.getoutput(f"gdalinfo -stats {condem_path} | tail -n 10"))
