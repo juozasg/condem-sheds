@@ -10,7 +10,7 @@ pysheds inputs are a D8 flow raster (geotiff) and site pixel index coordinates (
 
 
 ## Running it
-To get site pixel index coordinates (col, row) or (x, y) for sites the QGIS script `d8-coords.py` must be run by copying it in QGIS Python Console. It will dump pixel coords for specified features into a `monitoring-d8-col-row.csv` file that gets fed into `pysheds`. QGIS `d8` raster layer is used to calculate pixel indexes. Each site must be placed on a meaningful accumulation flow line pixel to have a meaningful catchment (see `condem.py`).
+To get site pixel index coordinates (col, row) or (x, y) for sites the QGIS script `qgis-d8-coords.py` must be run by copying it in QGIS Python Console. It will dump pixel coords for specified features into a `monitoring-d8-col-row.csv` file that gets fed into `pysheds`. QGIS `d8` raster layer is used to calculate pixel indexes. Each site must be placed on a meaningful accumulation flow line pixel to have a meaningful catchment (see `condem.py`).
 
 `process-exports/generate-catchments.py` will use the same `d8` raster and the generated `monitoring-d8-col-row.csv` to calculate catchment geotiffs for each site.
 
