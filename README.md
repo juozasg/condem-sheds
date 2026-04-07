@@ -36,4 +36,4 @@ To get site pixel index coordinates (col, row) or (x, y) for sites the QGIS scri
 
 
 ## Non-catchment data packaging
-`process-exports/id-sites-csv.py` will update `site.geojson` feature collection to add a numerical ID for each site string ID. For example `elkhart-1` will be numbered as `20001`. Numeric IDs are required for fast feature state queries in the `maplibre-gl` mapping library.
+`process-exports/id-sites-geojson.py` will process `exports/sites.geojson` feature collection to add a numerical ID for each site string ID. For example `elkhart-1` will be numbered as `20001`. Numeric IDs are required for fast feature state queries in the `maplibre-gl` mapping library. After shaving the output geojson `sites-with-id.geojson` should be renamed to singular `site.geojson` for the data package.

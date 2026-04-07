@@ -4,10 +4,10 @@ import re
 import json
 
 
-path = '/home/juozas/code/SJRBC-web-map-data/datasets.csv'
+datasets_path = '/home/juozas/code/SJRBC-web-map-data/datasets.csv'
 sites_datasets_id_dict = {}
 
-with open(path, 'r') as csvfile:
+with open(datasets_path, 'r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         if 'datasetId' in row and 'id' in row:
@@ -31,8 +31,9 @@ def numeric_site_id(site_id):
     return 0
 
 # Load the GeoJSON file
-geojson_path = '/home/juozas/code/SJRBC-web-map-data/geojson/site.geojson'
-with open(geojson_path, 'r') as f:
+# geojson_path = '/home/juozas/code/SJRBC-web-map-data/geojson/site.geojson'
+geojson_input_path = 'exports/sites.geojson'
+with open(geojson_input_path, 'r') as f:
     data = json.load(f)
 
 # Process each feature and add the numeric id
@@ -45,8 +46,8 @@ for feature in data['features']:
         features_updated += 1
 
 # Save the updated GeoJSON back to the same file
-with open(geojson_path, 'w') as f:
+geojson_output_path = 'exports/sites-with-id.geojson'
+with open(geojson_output_path, 'w') as f:
     json.dump(data, f)
 
-print(f"Added numeric id property to {features_updated} features in {geojson_path}")
-
+print(f"Added numeric id property to {features_updated} features in {geojson_output_path}")
