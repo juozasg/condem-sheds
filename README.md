@@ -12,12 +12,17 @@ pysheds inputs are a D8 flow raster (geotiff) and site pixel index coordinates (
 ## Running it
 To get site pixel index coordinates (col, row) or (x, y) for sites the QGIS script `qgis-d8-coords.py` must be run by copying it in QGIS Python Console. It will dump pixel coords for specified features into a `monitoring-d8-col-row.csv` file that gets fed into `pysheds`. QGIS `d8` raster layer is used to calculate pixel indexes. Each site must be placed on a meaningful accumulation flow line pixel to have a meaningful catchment (see `condem.py`).
 
-`process-exports/generate-catchments.py` will use the same `d8` raster and the generated `monitoring-d8-col-row.csv` to calculate catchment geotiffs for each site.
+`generate-catchments.py` will use the same `d8` raster and the generated `monitoring-d8-col-row.csv` to calculate catchment geotiffs for each site.
 
-`process-exports/polygonize-catchment.py` takes each catchment geotiff raster and will polygonize it, projected it to `EPSG:4326` (lat, lon), then  simplify the geometry and then save it as a geojson polygon.
+`process-exports/polygonize-catchment.py` takes each catchment geotiff raster and will polygonize it, projected it to `EPSG:4326` (lat, lon), then  simplify the geometry and then save it as a geojson polygon. `monitoring-d8-col-row.csv` provides the list of sites (and rivers) to process. **native python must be used, not .venv python - for QGIS/GDAL**
 
 `shave-catchments.sh` will reduce the length of floating points ASCII in geojson files to reduce file size.
 
+
+## Data packaging
+[St. Joseph Basin River Data Explorer](https://github.com/juozasg/river-data-explorer) uses data packages stored in the [SJRBC-web-map-data](https://github.com/Limnogirl90/SJRBC-web-map-data) data repo. The `geojson` folder contains all the features used for the interactive map.
+
+`process-exports/merge-cachments.py` merges `site-*.geojson` catchment shape files into a single `site-cachments.geojson` file wih correct ID metadata for each feature.
 
 
 ## D8 and accumulation flow
@@ -29,10 +34,6 @@ To get site pixel index coordinates (col, row) or (x, y) for sites the QGIS scri
 
 
 
-## Data packaging
-[St. Joseph Basin River Data Explorer](https://github.com/juozasg/river-data-explorer) uses data packages stored in the [SJRBC-web-map-data](https://github.com/Limnogirl90/SJRBC-web-map-data) data repo. The `geojson` folder contains all the features used for the interactive map.
-
-`process-exports/merge-cachments.py` merges `site-*.geojson` catchment shape files into a single `site-cachments.geojson` file wih correct ID metadata for each feature.
 
 
 ## Non-catchment data packaging

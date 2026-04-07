@@ -3,7 +3,8 @@
 source .venv/bin/activate
 
 # for each file in the catchments directory
-for file in generated-catchments/geojson/output/*.geojson; do
+# for file in generated-catchments/geojson/output/*.geojson; do
+for file in generated-catchments/geojson/output/site-elkhart-*.geojson; do
 		# shave the catchment
 		# get file basename
 		filename=$(basename -- "$file")

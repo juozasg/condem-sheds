@@ -18,13 +18,13 @@ with open('monitoring-d8-col-row.csv', 'r') as f:
 
 
 # Read rivers-d8-col-row.csv
-rivers_with_raster_coords = []
-with open('rivers-d8-col-row.csv', 'r') as f:
-    reader = csv.reader(f)
-    next(reader)  # Skip header row
-    for row in reader:
-        river_id, startCol, startRow, endCol, endRow = row
-        rivers_with_raster_coords.append([river_id, int(startCol), int(startRow), int(endCol), int(endRow)])
+# rivers_with_raster_coords = []
+# with open('rivers-d8-col-row.csv', 'r') as f:
+#     reader = csv.reader(f)
+#     next(reader)  # Skip header row
+#     for row in reader:
+#         river_id, startCol, startRow, endCol, endRow = row
+#         rivers_with_raster_coords.append([river_id, int(startCol), int(startRow), int(endCol), int(endRow)])
 
 print("generate-catchments.py: Starting...")
 from catchment import calc_catchment
@@ -39,18 +39,18 @@ for site in sites_with_raster_coords:
         calc_catchment('data/condem-pass-2/output/d8.tif', col, row, path)
 
 
-for river in rivers_with_raster_coords:
-    river_id, startCol, startRow, endCol, endRow = river
-    print(f"generate-catchments.py: Generating catchment for river {river_id}")
-    name = f'river-start-{river_id}'
-    path = f'generated-catchments/{name}.tif'
-    if not os.path.isfile(path):
-        calc_catchment('data/condem-pass-2/output/d8.tif', startCol, startRow, path)
+# for river in rivers_with_raster_coords:
+#     river_id, startCol, startRow, endCol, endRow = river
+#     print(f"generate-catchments.py: Generating catchment for river {river_id}")
+#     name = f'river-start-{river_id}'
+#     path = f'generated-catchments/{name}.tif'
+#     if not os.path.isfile(path):
+#         calc_catchment('data/condem-pass-2/output/d8.tif', startCol, startRow, path)
 
-    name = f'river-end-{river_id}'
-    path = f'generated-catchments/{name}.tif'
-    if not os.path.isfile(path):
-        calc_catchment('data/condem-pass-2/output/d8.tif', endCol, endRow, path)
+#     name = f'river-end-{river_id}'
+#     path = f'generated-catchments/{name}.tif'
+#     if not os.path.isfile(path):
+#         calc_catchment('data/condem-pass-2/output/d8.tif', endCol, endRow, path)
 
 
 # for every tif file in generated-catchment

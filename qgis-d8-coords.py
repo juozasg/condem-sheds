@@ -5,18 +5,20 @@
 # NOTE: commented out rivers and everything else except new elkhart sites
 raster = QgsProject.instance().mapLayersByName('d8')[0]
 
-monitoring = QgsProject.instance().mapLayersByName('monitoring')[0]
-flow_usgs = QgsProject.instance().mapLayersByName('flow-usgs')[0]
-flow_tolthawk = QgsProject.instance().mapLayersByName('flow-tolthawk')[0]
+new_sites = QgsProject.instance().mapLayersByName('new-sites')[0]
+# monitoring = QgsProject.instance().mapLayersByName('monitoring')[0]
+# flow_usgs = QgsProject.instance().mapLayersByName('flow-usgs')[0]
+# flow_tolthawk = QgsProject.instance().mapLayersByName('flow-tolthawk')[0]
 
 
-rivers = list(QgsProject.instance().mapLayersByName('rivers')[0].getFeatures())
+# rivers = list(QgsProject.instance().mapLayersByName('rivers')[0].getFeatures())
 
-sites = list(monitoring.getFeatures()) + list(flow_usgs.getFeatures()) + list(flow_tolthawk.getFeatures())
+# sites = list(monitoring.getFeatures()) + list(flow_usgs.getFeatures()) + list(flow_tolthawk.getFeatures())
+sites = list(new_sites.getFeatures())
 sites_with_raster_coords = []
 rivers_with_raster_coords = []
 
-# print(sites)
+print(sites)
 # exit()
 
 def pos_to_col_row(layer, point):
@@ -46,32 +48,34 @@ for site in sites:
     col, row = pos_to_col_row(raster, point)
 
     siteId = site['siteId']
+    print(siteId, col, row, point)
     if col >= 0 and row >= 0:
         sites_with_raster_coords.append((siteId, col, row))
 
-for river in rivers:
-    # rivers are LineString features
-    # get line
-    geom = river.geometry()
-    fpoint = qgis.core.QgsPointXY(get_line_first_or_last_vertex(geom, first=True))
-    fcol, frow = pos_to_col_row(raster, fpoint)
+# for river in rivers:
+#     # rivers are LineString features
+#     # get line
+#     geom = river.geometry()
+#     fpoint = qgis.core.QgsPointXY(get_line_first_or_last_vertex(geom, first=True))
+#     fcol, frow = pos_to_col_row(raster, fpoint)
 
-    lpoint = qgis.core.QgsPointXY(get_line_first_or_last_vertex(geom, first=False))
-    lcol, lrow = pos_to_col_row(raster, lpoint)
+#     lpoint = qgis.core.QgsPointXY(get_line_first_or_last_vertex(geom, first=False))
+#     lcol, lrow = pos_to_col_row(raster, lpoint)
 
-    rid = river['id']
-    rivers_with_raster_coords.append((rid, fcol, frow, lcol, lrow))
+#     rid = river['id']
+#     rivers_with_raster_coords.append((rid, fcol, frow, lcol, lrow))
 
 # write to csv
 import csv
-with open('monitoring-d8-col-row.csv', 'w') as f:
+with open('/mnt/data/gis/catchment/usgs-ui2/pysheds/monitoring-d8-col-row.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['siteId', 'col', 'row'])
     for site in sites_with_raster_coords:
         writer.writerow(site)
 
-with open('rivers-d8-col-row.csv', 'w') as f:
-    writer = csv.writer(f)
-    writer.writerow(['id', 'startCol', 'startRow', 'endCol', 'endRow'])
-    for river in rivers_with_raster_coords:
-        writer.writerow(river)
+print("wrote monitoring-d8-col-row.csv")
+# with open('rivers-d8-col-row.csv', 'w') as f:
+#     writer = csv.writer(f)
+#     writer.writerow(['id', 'startCol', 'startRow', 'endCol', 'endRow'])
+#     for river in rivers_with_raster_coords:
+#         writer.writerow(river)
